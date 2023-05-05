@@ -1,23 +1,33 @@
 import requests
-import configparser
+from requests.exceptions import HTTPError
+from dotenv import load_dotenv
+import os
 
-# Here I grab the API key from the config file
-config = configparser.ConfigParser()
-config.read('config.conf')
-BEA_API_KEY = config['APIKEYS']['BEA_API_KEY']
+load_dotenv()
 
-# Below is the URL for BEA testing and try statement below that.
-url = 'https://apps.bea.gov/api/data?&' + 'UserId=' + BEA_API_KEY + '&method=GETDATASETLIST&' 
-try:
-    response = requests.get(url)
-except Exception as err:
-    print(f'There was an error: {err}')
-else:
-    print('Success!!')
-    print(response.status_code)
-finally:
-    data = response.json()
-    for dataset in data['BEAAPI']['Results']['Dataset']:
-        print(dataset)
+URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
 
-## AS OF Wed 5/3 the above works and prints the list of datasets to the consol
+
+def main():
+    print("Inside main.py")
+    
+    for link in URL_POOL:
+        print("inside for loop")
+        if link == 'MD_DJI_INDICES_URL':
+            pass
+        try:
+            print("Inside Try")
+            url = os.get_env(link)
+            response = requests.get(url)
+
+            response.raise_for_status()
+        except HTTPError as http_err:
+            print(f'An HTTP error occurred on {link}: {http_err}')
+        except Exception as err:
+            print(f'There was an error with {link} /n', err)
+        finally:
+            print("DONE!")
+
+
+
+# The above is untested as of 5/5/23
