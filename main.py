@@ -12,23 +12,26 @@ def main():
     print("Inside main()")
     
     for link in URL_POOL:
-        print("inside for loop")
         if link == 'MD_DJI_INDICES_URL':
-            pass
+            print(link, " ...Bypassing")
+            continue
         try:
-            print("Inside Try")
+            print("Inside Try \n")
             url = os.getenv(link)
-            print(link, url)
-            # response = requests.get(url)
+            print(link, '\n', url, '\n')
+            response = requests.get(url)
 
-            # response.raise_for_status()
+            response.raise_for_status()
+            data = response.json()
         except HTTPError as http_err:
             print(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
             print(f'There was an error with {link}', err)
         finally:
-            print("DONE!")
+            print("DONE!\n")
+            print(" ... ...\n")
+            print(data)
 
 main()
 
-# The above is tested SUCCESSFULLY as of 5/10/23
+# tested as of 5/11 at nopon and all works as expected. Although Alpha Vantage limts API calls to 5 per min so need to adjust process for that
