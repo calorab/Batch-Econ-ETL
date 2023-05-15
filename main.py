@@ -3,6 +3,8 @@ from requests.exceptions import HTTPError
 from dotenv import load_dotenv
 import os
 import time
+import pandas as p
+import sqlite3
 
 load_dotenv()
 
@@ -38,13 +40,15 @@ def main():
             print(f'There was an error with {link}', err)
         finally:
             if data != []:
-                print(data)
+                print('Here is the data: \n',data)
             else:
                 print('This is a retry: \n', retry)
 
 
-            
+def handle_data(data, source):
+    conn = sqlite3.connect
+
 
 main()
 
-# tested as of 5/11 at noon and all works as expected. Although Alpha Vantage limts API calls to 5 per min so need to adjust process for that
+
