@@ -45,6 +45,7 @@ def format_data(data, source):
     field_type = map[source]['fields']
     meta_data = map[source]['meta_data']
 
+# tested the below and get the correct info YAY! (5/16/23 @ 4:15)
     print(f'Data table name for {source}: ', data_base_table)
     print(f'Field type for {source}: ', field_type)
     print(f'Meta data for {source}?: ', meta_data)
