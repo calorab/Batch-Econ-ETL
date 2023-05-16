@@ -7,8 +7,9 @@ import pandas as p
 import sqlite3
 
 load_dotenv()
+# ,'AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL'
 
-URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
+URL_POOL = ('AV_FOREX_URL')
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
         except HTTPError as http_err:
             print(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
-            print(f'There was an error with {link}', err)
+            print(f'There was an error with {link}:', err)
         finally:
             if data != []:
                 print('Here is the data: \n',data)
