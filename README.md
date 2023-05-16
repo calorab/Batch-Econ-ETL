@@ -14,6 +14,4 @@ So after thinking about this here is what I think I want to do
 
 
 NOTE: 
-    1 Need to test MD endpoints and parameters in Postman
-    2 Need to get symbols for other major indices
-    3 Need to test main.py
+    1 commodities index has no values before: 2003-01-01 and needs to be adjusted for that in the GET request

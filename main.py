@@ -6,48 +6,62 @@ import time
 import pandas as p
 import sqlite3
 
-load_dotenv()
-# ,'AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL'
+from mapping import field_mapping as map
 
-URL_POOL = ('AV_FOREX_URL')
+load_dotenv()
+
+URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
 
 
 def main():
-    print("Inside main()")
-    
+
     for link in URL_POOL:
         if link == 'MD_DJI_INDICES_URL':
             print(link, " ...Bypassing")
             continue
         try:
-            print("Inside Try \n")
             url = os.getenv(link)
             print(link, '\n', url, '\n')
             response = requests.get(url)
 
             response.raise_for_status()
             data = response.json()
-            for i in data:
-                if i == 'Note':
-                    print(f'60 Second delay for {link}...\n')
-                    time.sleep(31)
-                    print('30 seconds left...')
-                    time.sleep(30)
-                    response, data = []
-                    retry = requests.get(url)
         except HTTPError as http_err:
             print(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
             print(f'There was an error with {link}:', err)
         finally:
-            if data != []:
-                print('Here is the data: \n',data)
-            else:
-                print('This is a retry: \n', retry)
+            print('Inside Finally block')
+            # HERE INSERT format_data function call
+            format_data(data, link)
+            print(f'15 second delay after call to {link}')
+            time.sleep(15)
 
 
-def handle_data(data, source):
-    conn = sqlite3.connect
+def format_data(data, source):
+    # Define the mapped data for each API call
+    data_set = data[map[source]['data_set']]
+    data_base_table = map[source]['db_table']
+    field_type = map[source]['fields']
+    meta_data = map[source]['meta_data']
+
+    print(f'Data table name for {source}: ', data_base_table)
+    print(f'Field type for {source}: ', field_type)
+    print(f'Meta data for {source}?: ', meta_data)
+    print(f'Data set example for {source} (first only): \n', data_set)
+
+    # conn = sqlite3.connect('MACRO_ECONOMIC_DATA')
+    # curr = conn.cursor()
+    # if field_type == 'dateValue':
+    #     curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + " (date TEXT, value INTEGER)")
+        
+    #     for record in data_set:
+    #         curr.execute("INSERT INTO " + data_base_table + " (date, value) VALUES (?,?)", record['date'], record['value'])
+    # else:
+    #     curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + "(open INTEGER, high INTEGER, low INTEGER, close INTEGER)")
+         
+    #     for record in data_set:
+    #         curr.execute("INSERT INTO " + data_base_table + " (open, high, low, close) VALUES (?,?,?,?)", record['1. open'], record['2. high'], record['3. low'], record['4. close'])
 
 
 main()
