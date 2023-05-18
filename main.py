@@ -5,8 +5,10 @@ import os
 import time
 import pandas as p
 import sqlite3
+from sqlite3 import OperationalError
 
 from mapping import field_mapping as map
+from dbconn import connection
 
 load_dotenv()
 
@@ -33,12 +35,12 @@ def main():
         finally:
             print('Inside Finally block')
             # HERE INSERT format_data function call
-            format_data(data, link)
+            build_data(data, link)
             print(f'15 second delay after call to {link}')
             time.sleep(15)
 
 
-def format_data(data, source):
+def build_data(data, source):
     # Define the mapped data for each API call
     data_set = data[map[source]['data_set']]
     data_base_table = map[source]['db_table']
@@ -49,22 +51,35 @@ def format_data(data, source):
     print(f'Data table name for {source}: ', data_base_table)
     print(f'Field type for {source}: ', field_type)
     print(f'Meta data for {source}?: ', meta_data)
-    print(f'Data set example for {source} (first only): \n', data_set)
+    # print(f'Data set example for {source} (first only): \n', data_set)
 
-    # conn = sqlite3.connect('MACRO_ECONOMIC_DATA')
-    # curr = conn.cursor()
-    # if field_type == 'dateValue':
-    #     curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + " (date TEXT, value INTEGER)")
+    curr = connection.cursor()
+    if field_type == 'dateValue':
+
+        try:
+            curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + " (date TEXT, value INTEGER)")
+
+            curr.execute("TRUNCATE TABLE " + data_base_table)
         
-    #     for record in data_set:
-    #         curr.execute("INSERT INTO " + data_base_table + " (date, value) VALUES (?,?)", record['date'], record['value'])
-    # else:
-    #     curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + "(open INTEGER, high INTEGER, low INTEGER, close INTEGER)")
+            for record in data_set:
+                curr.execute("INSERT INTO " + data_base_table + " (date, value) VALUES (?,?)", record['date'], record['value'])
+        except OperationalError as err:
+            print(f'    Opp Error: {err}')
+        except:
+            print('ya done fucked up!')
+
+    else:
+        try:
+            curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + "(open INTEGER, high INTEGER, low INTEGER, close INTEGER)")
+
+            curr.execute("TRUNCATE TABLE " + data_base_table)
          
-    #     for record in data_set:
-    #         curr.execute("INSERT INTO " + data_base_table + " (open, high, low, close) VALUES (?,?,?,?)", record['1. open'], record['2. high'], record['3. low'], record['4. close'])
-
-
+            for record in data_set:
+                curr.execute("INSERT INTO " + data_base_table + " (open, high, low, close) VALUES (?,?,?,?)", record['1. open'], record['2. high'], record['3. low'], record['4. close'])
+        except OperationalError as err:
+            print(f'    Opp Error: {err}')
+        except:
+            print('ya done fucked up! candle-style')
 main()
 
 
