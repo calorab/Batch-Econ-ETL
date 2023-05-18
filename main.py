@@ -5,10 +5,10 @@ import os
 import time
 import pandas as p
 import sqlite3
-from sqlite3 import OperationalError
+from sqlite3 import OperationalError, Error
 
 from mapping import field_mapping as map
-from dbconn import connection
+
 
 load_dotenv()
 
@@ -53,33 +53,47 @@ def build_data(data, source):
     print(f'Meta data for {source}?: ', meta_data)
     # print(f'Data set example for {source} (first only): \n', data_set)
 
-    curr = connection.cursor()
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+
+    curr = conn.cursor()
     if field_type == 'dateValue':
-
         try:
-            curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + " (date TEXT, value INTEGER)")
+            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date TEXT, value TEXT)''')
+            print('after create table')
+            curr.execute('''DELETE FROM ''' + data_base_table)
+            print('after vacuum')
 
-            curr.execute("TRUNCATE TABLE " + data_base_table)
-        
             for record in data_set:
-                curr.execute("INSERT INTO " + data_base_table + " (date, value) VALUES (?,?)", record['date'], record['value'])
+                curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, value) VALUES (?,?)''', (record['date'], record['value']))
         except OperationalError as err:
             print(f'    Opp Error: {err}')
-        except:
-            print('ya done fucked up!')
+        except Error as err:
+            print('Ya done fucked up! dateValue-style', err)
+        
 
     else:
         try:
-            curr.execute("CREATE TABLE IF NOT EXISTS " + data_base_table + "(open INTEGER, high INTEGER, low INTEGER, close INTEGER)")
+            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(open TEXT, high TEXT, low TEXT, close TEXT)''')
+            print('after create table')
 
-            curr.execute("TRUNCATE TABLE " + data_base_table)
+            curr.execute('''DELETE FROM ''' + data_base_table)
          
             for record in data_set:
-                curr.execute("INSERT INTO " + data_base_table + " (open, high, low, close) VALUES (?,?,?,?)", record['1. open'], record['2. high'], record['3. low'], record['4. close'])
+                curr.execute('''INSERT INTO ''' + data_base_table + ''' (open, high, low, close) VALUES (?,?,?,?)''', (record[0], record[1], record[2], record[3]))
         except OperationalError as err:
             print(f'    Opp Error: {err}')
-        except:
-            print('ya done fucked up! candle-style')
+        except Error as err:
+            print('Ya done fucked up! candle-style', err)
+        
+
+    
+    conn.commit()
+    conn.close()
+
+
 main()
 
 
