@@ -9,7 +9,7 @@ from sqlite3 import OperationalError, Error
 
 from mapping import field_mapping as map
 
-
+# Accessing the .env vile in order to grab the URL's fopr GEt requests to the API's listed in the below tuple
 load_dotenv()
 
 URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
@@ -17,11 +17,14 @@ URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_U
 
 def main():
 
+    # For each link in URL_POOL above do the below
     for link in URL_POOL:
         if link == 'MD_DJI_INDICES_URL':
             print(link, " ...Bypassing")
             continue
         try:
+
+            # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
             print(link, '\n', url, '\n')
             response = requests.get(url)
@@ -33,30 +36,33 @@ def main():
         except Exception as err:
             print(f'There was an error with {link}:', err)
         finally:
-            print('Inside Finally block')
+
+            # Insert data into Sqlite Database
             build_data(data, link)
+
+            # 15 second delay due to API call limits for Alpha vantage (5 calls/min Max)
             print(f'15 second delay after call to {link}')
             time.sleep(15)
 
 
 def build_data(data, source):
+    
     # Define the mapped data for each API call
     data_set = data[map[source]['data_set']]
     data_base_table = map[source]['db_table']
     field_type = map[source]['fields']
     meta_data = map[source]['meta_data']
 
+    # print(f'Meta data for {source}?: ', meta_data)
 
-    print(f'Data table name for {source}: ', data_base_table)
-    print(f'Field type for {source}: ', field_type)
-    print(f'Meta data for {source}?: ', meta_data)
-    print(f'Data set example for {source}: \n', data_set)
-
+    # Check for innitial DB connection issue
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
         print('Connection error \n', err)
 
+    # I needed separate for-loops for each API call based on either of 2 formats. 
+    # Below I build the table, truncate the table (there is no truncate in sqlite) and then insert the data into the respective tables
     curr = conn.cursor()
     if field_type == 'dateValue':
         try:
@@ -88,7 +94,7 @@ def build_data(data, source):
             print('Ya done fucked up! candle-style', err)
         
 
-    
+    # After creating a connection to sqlite DB I have to committhe changes and closethe connection
     conn.commit()
     conn.close()
 
