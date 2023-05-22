@@ -34,7 +34,6 @@ def main():
             print(f'There was an error with {link}:', err)
         finally:
             print('Inside Finally block')
-            # HERE INSERT format_data function call
             build_data(data, link)
             print(f'15 second delay after call to {link}')
             time.sleep(15)
@@ -47,11 +46,11 @@ def build_data(data, source):
     field_type = map[source]['fields']
     meta_data = map[source]['meta_data']
 
-# tested the below and get the correct info YAY! (5/16/23 @ 4:15)
+
     print(f'Data table name for {source}: ', data_base_table)
     print(f'Field type for {source}: ', field_type)
     print(f'Meta data for {source}?: ', meta_data)
-    # print(f'Data set example for {source} (first only): \n', data_set)
+    print(f'Data set example for {source}: \n', data_set)
 
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
@@ -76,13 +75,13 @@ def build_data(data, source):
 
     else:
         try:
-            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(open TEXT, high TEXT, low TEXT, close TEXT)''')
+            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
             print('after create table')
 
             curr.execute('''DELETE FROM ''' + data_base_table)
          
-            for record in data_set:
-                curr.execute('''INSERT INTO ''' + data_base_table + ''' (open, high, low, close) VALUES (?,?,?,?)''', (record[0], record[1], record[2], record[3]))
+            for key, val in data_set.items():
+                curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
         except OperationalError as err:
             print(f'    Opp Error: {err}')
         except Error as err:
