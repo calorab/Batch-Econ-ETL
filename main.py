@@ -67,23 +67,19 @@ def build_data(data, source):
     if field_type == 'dateValue':
         try:
             curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date TEXT, value TEXT)''')
-            print('after create table')
             curr.execute('''DELETE FROM ''' + data_base_table)
-            print('after vacuum')
-
+            
             for record in data_set:
                 curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, value) VALUES (?,?)''', (record['date'], record['value']))
         except OperationalError as err:
             print(f'    Opp Error: {err}')
         except Error as err:
-            print('Ya done fucked up! dateValue-style', err)
+            print(err)
         
 
     else:
         try:
             curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
-            print('after create table')
-
             curr.execute('''DELETE FROM ''' + data_base_table)
          
             for key, val in data_set.items():
@@ -91,7 +87,7 @@ def build_data(data, source):
         except OperationalError as err:
             print(f'    Opp Error: {err}')
         except Error as err:
-            print('Ya done fucked up! candle-style', err)
+            print(err)
         
 
     # After creating a connection to sqlite DB I have to committhe changes and closethe connection
