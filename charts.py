@@ -6,18 +6,15 @@ import panel as pn
 import hvplot.pandas
 import sqlite3
 from sqlite3 import OperationalError, Error
+from dash import Dash, html, dash_table
 
-pn.extension() # for using panel inside vscode
 
 def main():
 
-    df = get_data()
-    chart = df.plot(x='date',y='value', color='#88d8b0')
-    # create pandas' data pipeline for widgets
-    # make widgets
-    # plot 
-    # Use panel to display in browser
-    plt.show()
+    build_dashboard()
+
+
+    
     
     
 
@@ -33,23 +30,25 @@ def get_data():
     except Error as err:
         print('Database Connection error \n', err)
     
-    df = pd.read_sql("SELECT date, value FROM COMMODITIES_INDEX WHERE date >= '2003-01-01' ORDER BY date DESC ", conn)
+    df = pd.read_sql("SELECT date, value FROM COMMODITIES_INDEX WHERE date >= '2003-01-01' ORDER BY date ASC ", conn)
     df['value'] = df['value'].astype(float)
+    print(df)
     
     return df
 
 
 
 
-def chart_test():
+def build_dashboard():
+    df = get_data()
+    app = Dash(__name__)
 
-    fig, ax = plt.subplots()  # Create a figure containing a single axes.
-    fig, axs = plt.subplots(2,2) 
-    fig, axs = plt.subplot_mosaic([['left', 'right-top'], ['left', 'right_bottom']])
-    ax.plot([1, 2, 3, 4], [1, 4, 2, 3])  # Plot some data on the axes.
-    axs.plot([1, 2, 3, 4], [1, 4, 2, 3])
+    app.layout = html.Div([
+        html.Div(children="Caleb's First App with Data"),
+        dash_table.DataTable(data=df.to_dict('records'), page_size=10)
+    ])
 
-    plt.show()
+    app.run_server(debug=True)
 
 
 
