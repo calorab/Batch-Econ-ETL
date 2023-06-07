@@ -54,31 +54,31 @@ field_mapping = {
         'db_table': 'US_UNEMPLOYMENT_RATE'
     },
     'MD_DJI_INDICES_URL': {
-        'data_set': '',
+        'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
         'db_table': 'DOW_JONES_INDUSTRIAL_AVERAGE'
     },
     'MD_COMP_INDICES_URL': {
-        'data_set': '',
+        'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
         'db_table': 'NASDAQ_COMPOSITE_INDEX'
     },
     'MD_NYA_INDICES_URL': {
-        'data_set': '',
+        'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
         'db_table': 'NYSE_COMPOSITE_INDEX'
     },
     'MD_SPX_INDICES_URL': {
-        'data_set': '',
+        'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
         'db_table': 'S&P_500_INDEX'
     },
     'MD_XAU_INDICES_URL': {
-        'data_set': '',
+        'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
         'db_table': 'GOLD_SILVER_INDEX'

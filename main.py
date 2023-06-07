@@ -9,22 +9,22 @@ from sqlite3 import OperationalError, Error
 
 from mapping import field_mapping as map
 
-# Accessing the .env vile in order to grab the URL's fopr GEt requests to the API's listed in the below tuple
+# Accessing the .env file in order to grab the URL's fopr GEt requests to the API's listed in the below tuple
 load_dotenv()
 
 URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
-TEST_URL_POOL = ('MD_DJI_INDICES_URL', 'MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL')
+# TEST_URL_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL', 'MD_DJI_INDICES_URL')
 
 def main():
 
     # For each link in URL_POOL above do the below
-    for link in TEST_URL_POOL:
+    for link in URL_POOL:
         
         try:
 
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            # print(link, '\n', url, '\n')
+            print(link, '\n', url, '\n')
             response = requests.get(url)
 
             response.raise_for_status()
@@ -49,7 +49,10 @@ def build_data(data, source):
     data_set = data[map[source]['data_set']]
     data_base_table = map[source]['db_table']
     field_type = map[source]['fields']
-    meta_data = map[source]['meta_data']
+    data_type = map[source]['data_set']
+    # meta_data = map[source]['meta_data']
+
+   
 
     # print(f'Meta data for {source}?: ', meta_data)
 
@@ -63,6 +66,7 @@ def build_data(data, source):
     # Below I build the table, truncate the table (there is no truncate in sqlite) and then insert the data into the respective tables
     curr = conn.cursor()
     if field_type == 'dateValue':
+         
         try:
             curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date TEXT, value TEXT)''')
             curr.execute('''DELETE FROM ''' + data_base_table)
@@ -77,18 +81,16 @@ def build_data(data, source):
 
     else:
 
-        if not data_set:
-            format_md_response(data,data_base_table)
-            # try:
-            #     curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
-            #     curr.execute('''DELETE FROM ''' + data_base_table)
-            
-            #     for key, val in data_set.items():
-            #         curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
-            # except OperationalError as err:
-            #     print(f'    Opp Error: {err}')
-            # except Error as err:
-            #     print(err)
+        try:
+            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
+            curr.execute('''DELETE FROM ''' + data_base_table)
+        
+            for key, val in data_set.items():
+                curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
+        except OperationalError as err:
+            print(f'    Opp Error: {err}')
+        except Error as err:
+            print(err)
         
 
         try:
@@ -108,10 +110,10 @@ def build_data(data, source):
     conn.close()
 
 
-def format_md_response(res,name):
-    open = res['o']
-    print(name)
-    print(open)
+# def format_md_response(res,name):
+#     open = res['o']
+#     print(name)
+#     print(open)
 
 main()
 
