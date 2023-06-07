@@ -13,20 +13,18 @@ from mapping import field_mapping as map
 load_dotenv()
 
 URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
-
+TEST_URL_POOL = ('MD_DJI_INDICES_URL', 'MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL')
 
 def main():
 
     # For each link in URL_POOL above do the below
-    for link in URL_POOL:
-        if link == 'MD_DJI_INDICES_URL':
-            print(link, " ...Bypassing")
-            continue
+    for link in TEST_URL_POOL:
+        
         try:
 
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            print(link, '\n', url, '\n')
+            # print(link, '\n', url, '\n')
             response = requests.get(url)
 
             response.raise_for_status()
@@ -78,6 +76,21 @@ def build_data(data, source):
         
 
     else:
+
+        if not data_set:
+            format_md_response(data,data_base_table)
+            # try:
+            #     curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
+            #     curr.execute('''DELETE FROM ''' + data_base_table)
+            
+            #     for key, val in data_set.items():
+            #         curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
+            # except OperationalError as err:
+            #     print(f'    Opp Error: {err}')
+            # except Error as err:
+            #     print(err)
+        
+
         try:
             curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
             curr.execute('''DELETE FROM ''' + data_base_table)
@@ -94,6 +107,11 @@ def build_data(data, source):
     conn.commit()
     conn.close()
 
+
+def format_md_response(res,name):
+    open = res['o']
+    print(name)
+    print(open)
 
 main()
 
