@@ -12,38 +12,16 @@ from mapping import field_mapping as map
 # Accessing the .env file in order to grab the URL's fopr GEt requests to the API's listed in the below tuple
 load_dotenv()
 
-URL_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
-# TEST_URL_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL', 'MD_DJI_INDICES_URL')
+AV_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
+MD_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL', 'MD_DJI_INDICES_URL')
 
 def main():
+    # av_api_call()
 
-    # For each link in URL_POOL above do the below
-    for link in URL_POOL:
-        
-        try:
-
-            # get the link from .env file and make the API request. Check for errors and decode the JSON.
-            url = os.getenv(link)
-            print(link, '\n', url, '\n')
-            response = requests.get(url)
-
-            response.raise_for_status()
-            data = response.json()
-        except HTTPError as http_err:
-            print(f'An HTTP error occurred on {link}: {http_err}')
-        except Exception as err:
-            print(f'There was an error with {link}:', err)
-        finally:
-
-            # Insert data into Sqlite Database
-            build_data(data, link)
-
-            # 15 second delay due to API call limits for Alpha vantage (5 calls/min Max)
-            print(f'15 second delay after call to {link}')
-            time.sleep(15)
+    md_api_call()
 
 
-def build_data(data, source):
+def build_av_data(data, source):
     
     # Define the mapped data for each API call
     data_set = data[map[source]['data_set']]
@@ -52,18 +30,12 @@ def build_data(data, source):
     data_type = map[source]['data_set']
     # meta_data = map[source]['meta_data']
 
-   
-
-    # print(f'Meta data for {source}?: ', meta_data)
-
     # Check for innitial DB connection issue
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
         print('Connection error \n', err)
 
-    # I needed separate for-loops for each API call based on either of 2 formats. 
-    # Below I build the table, truncate the table (there is no truncate in sqlite) and then insert the data into the respective tables
     curr = conn.cursor()
     if field_type == 'dateValue':
          
@@ -108,6 +80,59 @@ def build_data(data, source):
     # After creating a connection to sqlite DB I have to committhe changes and closethe connection
     conn.commit()
     conn.close()
+
+
+def build_md_data(data, link):
+    print(f'    Inside Build MD Data: {link}')
+
+
+
+def av_api_call():
+    # For each link in URL_POOL above do the below
+    for link in AV_POOL:
+        
+        try:
+
+            # get the link from .env file and make the API request. Check for errors and decode the JSON.
+            url = os.getenv(link)
+            print(link, '\n', url, '\n')
+            response = requests.get(url)
+
+            response.raise_for_status()
+            data = response.json()
+        except HTTPError as http_err:
+            print(f'An HTTP error occurred on {link}: {http_err}')
+        except Exception as err:
+            print(f'There was an error with {link}:', err)
+        finally:
+
+            # Insert data into Sqlite Database
+            build_av_data(data, link)
+
+            # 15 second delay due to API call limits for Alpha vantage (5 calls/min Max)
+            print(f'15 second delay after call to {link}')
+            time.sleep(15)
+
+def md_api_call():
+     for link in MD_POOL:
+        try:
+            # get the link from .env file and make the API request. Check for errors and decode the JSON.
+            url = os.getenv(link)
+            print(link,)
+            response = requests.get(url)
+
+            response.raise_for_status()
+            data = response.json()
+        except HTTPError as http_err:
+            print(f'An HTTP error occurred on {link}: {http_err}')
+        except Exception as err:
+            print(f'There was an error with {link}:', err)
+        finally:
+
+            # Insert data into Sqlite Database
+            build_md_data(data, link)
+
+
 
 
 # def format_md_response(res,name):
