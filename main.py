@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import time
 import pandas as p
+from pandas import io
 import sqlite3
 from sqlite3 import OperationalError, Error
 
@@ -85,6 +86,10 @@ def build_av_data(data, source):
 def build_md_data(data, link):
     print(f'    Inside Build MD Data: {link}')
     
+    df = p.read_json(data)
+    
+    print(df)
+
 
 
 
@@ -124,6 +129,7 @@ def md_api_call():
 
             response.raise_for_status()
             data = response.json()
+            
         except HTTPError as http_err:
             print(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
