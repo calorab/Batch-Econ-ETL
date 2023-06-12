@@ -108,6 +108,10 @@ def build_md_data(data, source):
 
     for row in data_rows:
         curr.execute(insert_query, row)
+    
+    # After creating a connection to sqlite DB I have to committhe changes and closethe connection
+    conn.commit()
+    conn.close()
 
 
 

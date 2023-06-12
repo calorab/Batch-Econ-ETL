@@ -75,7 +75,7 @@ field_mapping = {
         'data_set': 's',
         'fields': 'candles',
         'meta_data': False,
-        'db_table': 'S&P_500_INDEX'
+        'db_table': 'SP_500_INDEX'
     },
     'MD_XAU_INDICES_URL': {
         'data_set': 's',
