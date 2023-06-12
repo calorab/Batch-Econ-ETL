@@ -2,6 +2,7 @@ import requests
 from requests.exceptions import HTTPError
 from dotenv import load_dotenv
 import os
+import csv
 import time
 import pandas as p
 from pandas import io
@@ -83,13 +84,30 @@ def build_av_data(data, source):
     conn.close()
 
 
-def build_md_data(data, link):
-    print(f'    Inside Build MD Data: {link}')
+def build_md_data(data, source):
+    print(f'    Inside Build MD Data: {source}')
+    data_base_table = map[source]['db_table']
     
-    df = p.read_json(data)
-    
-    print(df)
+    csv_data = data.splitlines()
+    reader = csv.reader(csv_data)
 
+    # Extract the header row and remaining data rows
+    header = next(reader)
+    data_rows = list(reader)
+
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+
+    curr = conn.cursor()
+
+    curr.execute(f"CREATE TABLE IF NOT EXISTS {data_base_table} ( open TEXT, close TEXT, high TEXT, low TEXT, volume TEXT, date Text)") 
+
+    insert_query = f"INSERT INTO {data_base_table} VALUES ({', '.join(['?'] * len(header))})"
+
+    for row in data_rows:
+        curr.execute(insert_query, row)
 
 
 
@@ -118,7 +136,8 @@ def av_api_call():
             # 15 second delay due to API call limits for Alpha vantage (5 calls/min Max)
             print(f'15 second delay after call to {link}')
             time.sleep(15)
-
+        
+ 
 def md_api_call():
      for link in MD_POOL:
         try:
@@ -128,8 +147,8 @@ def md_api_call():
             response = requests.get(url)
 
             response.raise_for_status()
-            data = response.json()
-            
+            data = response.text
+
         except HTTPError as http_err:
             print(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
