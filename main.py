@@ -85,7 +85,6 @@ def build_av_data(data, source):
 
 
 def build_md_data(data, source):
-    print(f'    Inside Build MD Data: {source}')
     data_base_table = map[source]['db_table']
     
     csv_data = data.splitlines()
@@ -102,16 +101,21 @@ def build_md_data(data, source):
 
     curr = conn.cursor()
 
-    curr.execute(f"CREATE TABLE IF NOT EXISTS {data_base_table} ( open TEXT, close TEXT, high TEXT, low TEXT, volume TEXT, date Text)") 
+    try:
+        curr.execute(f"CREATE TABLE IF NOT EXISTS {data_base_table} ( open TEXT, close TEXT, high TEXT, low TEXT, volume TEXT, date Text)") 
 
-    insert_query = f"INSERT INTO {data_base_table} VALUES ({', '.join(['?'] * len(header))})"
+        insert_query = f"INSERT INTO {data_base_table} VALUES ({', '.join(['?'] * len(header))})"
 
-    for row in data_rows:
-        curr.execute(insert_query, row)
-    
-    # After creating a connection to sqlite DB I have to committhe changes and closethe connection
-    conn.commit()
-    conn.close()
+        for row in data_rows:
+            curr.execute(insert_query, row)
+    except OperationalError as err:
+        print(f'    Opp Error: {err}')
+    except Error as err:
+        print(err)
+    finally:
+        # After creating a connection to sqlite DB I have to committhe changes and closethe connection
+        conn.commit()
+        conn.close()
 
 
 
