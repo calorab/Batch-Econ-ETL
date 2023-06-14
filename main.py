@@ -11,15 +11,17 @@ from sqlite3 import OperationalError, Error
 
 from mapping import field_mapping as map
 
-# Accessing the .env file in order to grab the URL's fopr GEt requests to the API's listed in the below tuple
+# Accessing the .env file in order to grab the URL's fopr GET requests to the API's listed in the below tuple
 load_dotenv()
 
 AV_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
 MD_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL', 'MD_DJI_INDICES_URL')
 
 def main():
-    # av_api_call()
+    # GET data from Alpha-Vantage API
+    av_api_call()
 
+    # GET data from Market Data API
     md_api_call()
 
 
@@ -168,11 +170,6 @@ def md_api_call():
 
 
 
-
-# def format_md_response(res,name):
-#     open = res['o']
-#     print(name)
-#     print(open)
 
 main()
 
