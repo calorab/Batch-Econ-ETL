@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import sqlite3
 from sqlite3 import OperationalError, Error
-from dash import Dash, html, dash_table
+from dash import Dash, html, dcc
 
 
-def main():
+def build_dashboard():
 
-    build_dashboard()
+    build_layout()
 
 
 def get_data():
@@ -24,17 +24,35 @@ def get_data():
     return df
 
 
-def build_dashboard():
+def build_layout():
     df = get_data()
     app = Dash(__name__)
 
     app.layout = html.Div([
-        html.Div(children="Caleb's Second App with Data"),
-        dash_table.DataTable(data=df.to_dict('records'), page_size=10)
+        '''
+
+        html.Div(Children=[
+            html.label('Consumer Economic Indicators'),
+            html.Table([CALEB Inflation, GDP, and CPI most recent numbers (more??)]),
+
+            html.Br(),
+            html.label('Banking Indicators'),
+            dcc.Graph([CALEB T-Yield and Fed Funds Rate])
+        ], CALEB styling goes here),
+
+        html.Div([
+            dcc.Graph([CALEB MEAT AND POTATOES!!!]),
+            dcc.Checklist([CALEB checklist items here - must be list!!!]),
+
+        ], CALEB Styling again)
+        
+        '''
+        
     ])
 
     app.run_server(debug=True)
+    # app.run_server(dev_tools_hot_reload=False) to remove hot-reloading
 
 
 
-main()
+build_dashboard()

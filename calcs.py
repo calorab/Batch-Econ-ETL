@@ -2,8 +2,9 @@ import numpy as np
 import pandas as pd
 import sqlite3
 
-# THE BELOW NEEDS TO BE EDITED FOR NON CANDLE FORMATTED TABLES (i.e date/value format) 
-# Although that would only be for Oil and Commodities Indices which I won;'t be investing in or charting in version 1
+# THE BELOW NEEDS TO BE TESTED!!!!! 
+# ALSO MAY NEED TO BE EDITED FOR NON CANDLE FORMATTED TABLES (i.e date/value format) 
+# Although that would only be for Oil and Commodities Indices which I won't be charting in version 1
 
 def build_calcs_table(table):
     conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
