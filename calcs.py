@@ -49,6 +49,8 @@ def build_bands(table):
 
     # Step 3: Convert string values to numbers
     df['close'] = df['close'].astype(float)
+    df['sma'] = df['close'].rolling(20).mean()
+    df['date'] = df['date'] # maybe don't need this??
 
     # #  Calculating Bolinger bands
     bb_period = 20
