@@ -19,25 +19,25 @@ def build_sma_crossover(table,field_type):
         sma_one = 20
         sma_two = 50
 
-        sma1 = df['close'].rolling(sma_one).mean()
-        print('The SMA one: \n', type(sma1)) #pandas series
+        sma_short = df['close'].rolling(sma_one).mean()
+        print('The SMA one: \n', type(sma_short)) #pandas series
 
-        sma2 = df['close'].rolling(sma_two).mean()
-        print('The SMA two: \n', type(sma2)) #pandas series
+        sma_long = df['close'].rolling(sma_two).mean()
+        print('The SMA two: \n', type(sma_long)) #pandas series
     else:
         df['value'] = df['value'].astype(float)
         # Calculating SMA (Smple Moving Average)
         sma_one = 20
         sma_two = 50
 
-        sma1 = df['value'].rolling(sma_one).mean()
-        print('The SMA one: \n', type(sma1)) #pandas series
+        sma_short = df['value'].rolling(sma_one).mean()
+        print('The SMA one: \n', type(sma_short)) #pandas series
 
-        sma2 = df['value'].rolling(sma_two).mean()
-        print('The SMA two: \n', type(sma2)) #pandas series
+        sma_long = df['value'].rolling(sma_two).mean()
+        print('The SMA two: \n', type(sma_long)) #pandas series
 
     conn.close()
-    return sma1,sma2
+    return sma_short,sma_long
 
 
 def build_ema(table,field_type):
