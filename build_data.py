@@ -168,9 +168,30 @@ def md_api_call():
             # Insert data into Sqlite Database
             build_md_data(data, link)
 
+def build_views():
+    # Check for innitial DB connection issue
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+
+    curr = conn.cursor()
+    curr.execute('''CREATE VIEW CONSUMER_ECON_VW AS
+        SELECT inf.values AS value, 'INFLATION' AS table_name
+        FROM US_INFLATION inf
+        WHERE inf.date = (SELECT MAX(date) FROM US_INFLATION)
+        UNION ALL
+        SELECT MAX(gdp.values) AS value, 'GDP (Quarterly)' AS table_name
+        FROM US_GDP_Quarterly gdp
+        WHERE gdp.date = (SELECT MAX(date) FROM US_GDP_Quarterly)
+        UNION ALL
+        SELECT MAX(cpi.values) AS value, 'CPI' AS table_name
+        FROM US_CPI cpi
+        WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
 
 
 
-main()
+build_views()
+# main()
 
 
