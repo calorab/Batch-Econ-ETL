@@ -49,9 +49,16 @@ def build_layout():
     app.run_server(debug=True)
     # app.run_server(dev_tools_hot_reload=False) to remove hot-reloading
 
+
+
 def build_econ_table():
-    # get data - need MAX('value') for Inflation, GDP and CPI. May take some building html-wise
-    # NEED A VIEW to get table titles**
+    # Check for innitial DB connection issue
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+
+    df = pd.read_sql_table('CONSUMER_ECON_VW', conn) # may need change to read_sql_query()
     # Need a figure (px.[graph-type])
     return html.Table([
                 html.Thead(
@@ -60,14 +67,24 @@ def build_econ_table():
                 html.Tbody([
                     html.Tr([
                         html.Td(df.iloc[i][col]) for col in df.columns
-                    ]) for i in range(min(len(df), 10))
+                    ]) for i in range(len(df)) # may need changes
                 ])
             ]), # CALEB Inflation, GDP, and CPI most recent numbers (more??)
 
 
 def build_fed_graph():
     # need series for 'values' for 100 days for both T-Yield and Fed Funds Rate
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+    
+    query = '''SELECT * FROM FED_RATES_VW ORDER BY date ASC'''
+    df = pd.read_sql_query(query, conn)
+    df['value'] = df['value'].astype(float)
+
     # Need a figure (px.[graph-type])
+    fig = px.line(df, x='date', y=range(0, 12) color='indicator') # was error here not sure why
     return dcc.Graph([]) #CALEB T-Yield and Fed Funds Rate
 
 def build_interactive_graph():

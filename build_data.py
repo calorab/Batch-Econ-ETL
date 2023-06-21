@@ -72,19 +72,7 @@ def build_av_data(data, source):
             print(err)
         
 
-        try:
-            curr.execute('''CREATE TABLE IF NOT EXISTS ''' + data_base_table + '''(date Text, open TEXT, high TEXT, low TEXT, close TEXT)''')
-            curr.execute('''DELETE FROM ''' + data_base_table)
-         
-            for key, val in data_set.items():
-                curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
-        except OperationalError as err:
-            print(f'    Opp Error: {err}')
-        except Error as err:
-            print(err)
-        
-
-    # After creating a connection to sqlite DB I have to committhe changes and closethe connection
+    # After creating a connection to sqlite DB I have to committhe changes and close the connection
     conn.commit()
     conn.close()
 
@@ -108,6 +96,7 @@ def build_md_data(data, source):
 
     try:
         curr.execute(f"CREATE TABLE IF NOT EXISTS {data_base_table} ( open TEXT, close TEXT, high TEXT, low TEXT, volume TEXT, date Text)") 
+        curr.execute('''DELETE FROM ''' + data_base_table)
 
         insert_query = f"INSERT INTO {data_base_table} VALUES ({', '.join(['?'] * len(header))})"
 
@@ -181,7 +170,7 @@ def build_views():
     curr = conn.cursor()
 
     # Build CONSUMER_ECON_VW View
-    curr.execute('''DROP VIEW CONSUMER_ECON_VW;''')
+    curr.execute('''DROP VIEW IF EXISTS CONSUMER_ECON_VW;''')
     curr.execute('''CREATE VIEW CONSUMER_ECON_VW AS
         SELECT 'INFLATION' AS Indicator, inf.value AS Value
         FROM US_INFLATION inf
@@ -194,6 +183,13 @@ def build_views():
         SELECT 'CPI' AS Indicator, cpi.value AS Value
         FROM US_CPI cpi
         WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
+    
+    # Build FED_RATES_VW View
+    curr.execute('''DROP VIEW IF EXISTS FED_RATES_VW;''')
+    curr.execute('''CREATE VIEW FED_RATES_VW AS
+        SELECT date, value, 'Tresury Yield' as indicator FROM US_TREASURY_YIELD
+        UNION ALL
+        SELECT date, value, 'Federal Funds Rate' as indicator FROM US_FEDERAL_FUNDS_RATE;''')
     
     conn.commit()
     conn.close()
