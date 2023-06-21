@@ -177,15 +177,15 @@ def build_views():
 
     curr = conn.cursor()
     curr.execute('''CREATE VIEW CONSUMER_ECON_VW AS
-        SELECT inf.values AS value, 'INFLATION' AS table_name
+        SELECT inf.value AS value, 'INFLATION' AS table_name
         FROM US_INFLATION inf
         WHERE inf.date = (SELECT MAX(date) FROM US_INFLATION)
         UNION ALL
-        SELECT MAX(gdp.values) AS value, 'GDP (Quarterly)' AS table_name
+        SELECT gdp.value AS value, 'GDP (Quarterly)' AS table_name
         FROM US_GDP_Quarterly gdp
         WHERE gdp.date = (SELECT MAX(date) FROM US_GDP_Quarterly)
         UNION ALL
-        SELECT MAX(cpi.values) AS value, 'CPI' AS table_name
+        SELECT cpi.value AS value, 'CPI' AS table_name
         FROM US_CPI cpi
         WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
 
