@@ -19,10 +19,13 @@ MD_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'M
 
 def main():
     # GET data from Alpha-Vantage API
-    av_api_call()
+    # av_api_call()
 
     # GET data from Market Data API
-    md_api_call()
+    # md_api_call()
+
+    # Build views for Dashboard
+    build_views()
 
 
 def build_av_data(data, source):
@@ -176,22 +179,28 @@ def build_views():
         print('Connection error \n', err)
 
     curr = conn.cursor()
+
+    # Build CONSUMER_ECON_VW View
+    curr.execute('''DROP VIEW CONSUMER_ECON_VW;''')
     curr.execute('''CREATE VIEW CONSUMER_ECON_VW AS
-        SELECT inf.value AS value, 'INFLATION' AS table_name
+        SELECT 'INFLATION' AS Indicator, inf.value AS Value
         FROM US_INFLATION inf
         WHERE inf.date = (SELECT MAX(date) FROM US_INFLATION)
         UNION ALL
-        SELECT gdp.value AS value, 'GDP (Quarterly)' AS table_name
+        SELECT 'GDP (Quarterly)' AS Indicator, gdp.value AS Value
         FROM US_GDP_Quarterly gdp
         WHERE gdp.date = (SELECT MAX(date) FROM US_GDP_Quarterly)
         UNION ALL
-        SELECT cpi.value AS value, 'CPI' AS table_name
+        SELECT 'CPI' AS Indicator, cpi.value AS Value
         FROM US_CPI cpi
         WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
+    
+    conn.commit()
+    conn.close()
 
 
 
-build_views()
-# main()
+
+main()
 
 
