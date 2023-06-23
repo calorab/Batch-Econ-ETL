@@ -172,15 +172,15 @@ def build_views():
     # Build CONSUMER_ECON_VW View
     curr.execute('''DROP VIEW IF EXISTS CONSUMER_ECON_VW;''')
     curr.execute('''CREATE VIEW CONSUMER_ECON_VW AS
-        SELECT 'INFLATION' AS Indicator, inf.value AS Value
+        SELECT 'INFLATION' AS indicator, inf.value AS value
         FROM US_INFLATION inf
         WHERE inf.date = (SELECT MAX(date) FROM US_INFLATION)
         UNION ALL
-        SELECT 'GDP (Quarterly)' AS Indicator, gdp.value AS Value
+        SELECT 'GDP (Quarterly)' AS indicator, gdp.value AS value
         FROM US_GDP_Quarterly gdp
         WHERE gdp.date = (SELECT MAX(date) FROM US_GDP_Quarterly)
         UNION ALL
-        SELECT 'CPI' AS Indicator, cpi.value AS Value
+        SELECT 'CPI' AS indicator, cpi.value AS value
         FROM US_CPI cpi
         WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
     

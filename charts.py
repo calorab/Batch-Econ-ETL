@@ -3,7 +3,8 @@ import pandas as pd
 import sqlite3
 from sqlite3 import OperationalError, Error
 from dash import Dash, html, dcc, Input, Output, callback
-import plotly.express as px # for creating figures for graphs
+import plotly.express as px 
+from mapping import field_mapping as map
 
 #  CALEB - you need ECON data, CONSUMER data and INTERACTIVE data
 
@@ -30,15 +31,31 @@ def get_cons_data():
 
     query = '''SELECT * FROM CONSUMER_ECON_VW'''
     df = pd.read_sql_query(query, conn)
-    
+    df['value'] = df['value'].astype(float)
     
     conn.close()
     return df
 
+def build_dropdown():
+    options = []
+    options_map = {}
+
+    for item in map.values():
+        options.append(item['name'])
+    
+    for key,item in map.items():
+       options_map[item['name']] = item['db_table']
+
+    return options, options_map
+    
+
 app = Dash(__name__)
+
 bank_df = get_bank_data()
 cons_df = get_cons_data()
 bank_figure = px.line(bank_df, x='date', y='value', color='indicator')
+dp_options, dp_dict = build_dropdown()
+
 
 app.layout = html.Div([
     html.Div([
@@ -56,16 +73,39 @@ app.layout = html.Div([
     ], style={'padding': 10, 'flex': 1}),
 
     html.Div([
-        dcc.Graph(id='main-graph'), #update function that returns a figure
-        dcc.Checklist([]), 
+        dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown'),
+        dcc.Graph(id='main-graph') #update function that returns a figure 
     ], style={'padding': 10, 'flex': 1}) 
         
 ], style={'display': 'flex', 'flex-direction': 'row'})
 
 
-# fig = px.line(df, x='date', y='value', color='indicator')
-def update_interactive_graph(table):
-    pass
+@callback(
+    Output('main-graph', 'figure'),
+    Input('main-dropdown', 'value'))
+def update_interactive_graph(index):
+    # Here I need to (1) get the dataframe, (2) build the figure and (3) return the figure
+    table = dp_dict[index]
+    # Check for innitial DB connection issue
+    try:
+        conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+    except Error as err:
+        print('Connection error \n', err)
+
+    query = f'SELECT * FROM {table} ORDER BY date ASC'
+    df = pd.read_sql_query(query, conn)
+
+    # y_axis = None
+    if index in ['WTI OIL', 'Commodities Index']:
+        y_axis = 'values'
+    else:
+        y_axis = 'close'
+    
+    df[y_axis] = df[y_axis].astype(float)
+    fig = px.line(df, x='date', y=y_axis)
+    conn.close()
+    # also need dropdown list for interactivity (line 60)
+    return fig
 
 app.run_server(debug=True)
 # app.run_server(dev_tools_hot_reload=False) to remove hot-reloading
