@@ -61,6 +61,8 @@ dp_options, dp_dict = build_dropdown()
 
 
 app.layout = html.Div([
+    html.H3('Economics dashboard', style={'font-weight': 'bold', 'text-align': 'center'}),
+    html.Hr(),
     html.Div([
         html.Label('Consumer Economic Indicators', style={'font-weight': 'bold'}),
         html.Table([
@@ -73,14 +75,14 @@ app.layout = html.Div([
         html.Br(),
         html.Label('Banking Indicators', style={'font-weight': 'bold'}),
         dcc.Graph(id='econ-graph-small', figure=bank_figure)
-    ], style={'padding': 10, 'flex': 1, 'width': '30%'}),
+    ], style={'padding': 10, 'flex': 1}),
 
     html.Div([
         dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown'),
         dcc.Graph(id='main-graph') #update function that returns a figure 
     ], style={'padding': 20, 'flex': 1, 'padding-top': 50}) 
         
-], style={'display': 'flex', 'flex-direction': 'row', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'grey', 'background-color': 'dark-grey'})
+], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})
 
 
 @callback(
