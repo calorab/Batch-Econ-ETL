@@ -64,24 +64,23 @@ app.layout = html.Div([
     html.H3('Economics dashboard', style={'font-weight': 'bold', 'text-align': 'center'}),
     html.Hr(),
     html.Div([
-        html.Label('Consumer Economic Indicators', style={'font-weight': 'bold'}),
-        html.Table([
-            html.Thead(
-                html.Tr([html.Td(cons_df.columns[0]), html.Td(cons_df.columns[1])])
-            ),
-            html.Tbody([html.Tr([html.Th(cons_df.iloc[0][0]), html.Td(cons_df.iloc[0][1])]), html.Tr([html.Th(cons_df.iloc[1][0]), html.Td(cons_df.iloc[1][1])]), html.Tr([html.Th(cons_df.iloc[2][0]), html.Td(cons_df.iloc[2][1])])])
-            ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'}), # CALEB Need to turn this into a loop or something eventually,
+        html.Div([
+            html.Label('Consumer Economic Indicators', style={'font-weight': 'bold'}),
+            html.Table([
+                html.Thead(
+                    html.Tr([html.Td(cons_df.columns[0]), html.Td(cons_df.columns[1])])
+                ),
+                html.Tbody([html.Tr([html.Th(cons_df.iloc[0][0]), html.Td(cons_df.iloc[0][1])]), html.Tr([html.Th(cons_df.iloc[1][0]), html.Td(cons_df.iloc[1][1])]), html.Tr([html.Th(cons_df.iloc[2][0]), html.Td(cons_df.iloc[2][1])]), html.Tr([html.Th(cons_df.iloc[3][0]), html.Td(cons_df.iloc[3][1])]), html.Tr([html.Th(cons_df.iloc[4][0]), html.Td(cons_df.iloc[4][1])])])
+                ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'}), # CALEB Need to turn this into a loop or something eventually,
 
-        html.Br(),
-        html.Label('Banking Indicators', style={'font-weight': 'bold'}),
-        dcc.Graph(id='econ-graph-small', figure=bank_figure)
-    ], style={'padding': 10, 'flex': 1}),
-
-    html.Div([
-        dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown'),
-        dcc.Graph(id='main-graph') 
-    ], style={'padding': 20, 'flex': 1, 'padding-top': 50}) 
-        
+            html.Br(),
+            dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown')
+            # html.Label('Banking Indicators', style={'font-weight': 'bold'}),
+            # dcc.Graph(id='econ-graph-small', figure=bank_figure)
+            ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 10, 'flex': 1.5, 'align-self': 'flex-start'}),
+    
+            dcc.Graph(id='main-graph', style={'padding': 20,'flex': 4, 'align-self': 'flex-end'}) 
+    ], style={'display': 'flex', 'flex-direction': 'row', 'padding': 10, 'flex': 1})       
 ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})
 
 
