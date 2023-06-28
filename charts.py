@@ -74,9 +74,16 @@ app.layout = html.Div([
                 ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'}), # CALEB Need to turn this into a loop or something eventually,
 
             html.Br(),
-            dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown')
-            # html.Label('Banking Indicators', style={'font-weight': 'bold'}),
-            # dcc.Graph(id='econ-graph-small', figure=bank_figure)
+            dcc.Dropdown(dp_options, 'S&P 500', id='index-dropdown', style={'margin-bottom': 10}),
+            html.Label('Simple Moving Average'),
+            html.Div([
+                dcc.Dropdown([10, 20, 50], 10,id='sma-dropdown-one', style={'margin-right': 20}),
+                dcc.Dropdown([20, 50, 80, 120], 20,id='sma-dropdown-two', style={'margin-left': 20}),
+            ], style={'display': 'flex', 'flex-direction': 'row', 'align-self': 'center'}),
+            
+            html.Br(),
+            html.Label('Exponential Moving Average'),
+            dcc.Dropdown([12, 24, 50, 100], 12, id='ema-dropdown', style={'margin-top': 10})
             ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 10, 'flex': 1.5, 'align-self': 'flex-start'}),
     
             dcc.Graph(id='main-graph', style={'padding': 20,'flex': 4, 'align-self': 'flex-end'}) 
@@ -86,9 +93,11 @@ app.layout = html.Div([
 
 @callback(
     Output('main-graph', 'figure'),
-    Input('main-dropdown', 'value'))
-def update_interactive_graph(index):
-    # Here I need to (1) get the dataframe, (2) build the figure and (3) return the figure
+    Input('index-dropdown', 'value'),
+    Input('sma-dropdown-one', 'value'),
+    Input('sma-dropdown-two', 'value'),
+    Input('ema-dropdown', 'value'))
+def update_interactive_graph(index, sma1, sma2, ema):
     table = dp_dict[index]
     # Check for innitial DB connection issue
     try:
@@ -106,7 +115,18 @@ def update_interactive_graph(index):
         y_axis = 'close'
     
     df[y_axis] = df[y_axis].astype(float)
-    fig = px.line(df, x='date', y=y_axis)
+
+    # Calculating SMA (Smple Moving Average)
+    sma_one = sma1
+    sma_two = sma2
+
+    df['sma_short'] = df[y_axis].rolling(sma_one).mean()
+    df['sma_long'] = df[y_axis].rolling(sma_two).mean()
+
+    # Calculate the Exponential Moving Average (EMA)
+    df['ema'] = df[y_axis].ewm(span=ema, adjust=False).mean() 
+
+    fig = px.line(df, x='date', y=[y_axis,'sma_short', 'sma_long', 'ema'])
     conn.close()
     # also need dropdown list for interactivity (line 60)
     return fig

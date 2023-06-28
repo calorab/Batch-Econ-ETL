@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import sqlite3
+from mapping import field_mapping as map
 
 # THE BELOW NEEDS TO BE TESTED!!!!! 
 # ALSO MAY NEED TO BE EDITED FOR NON CANDLE FORMATTED TABLES (i.e date/value format) 
