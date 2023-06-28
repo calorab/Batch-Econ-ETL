@@ -79,7 +79,7 @@ app.layout = html.Div([
 
     html.Div([
         dcc.Dropdown(dp_options, 'S&P 500', id='main-dropdown'),
-        dcc.Graph(id='main-graph') #update function that returns a figure 
+        dcc.Graph(id='main-graph') 
     ], style={'padding': 20, 'flex': 1, 'padding-top': 50}) 
         
 ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})

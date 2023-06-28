@@ -182,14 +182,22 @@ def build_views():
         UNION ALL
         SELECT 'CPI' AS indicator, cpi.value AS value
         FROM US_CPI cpi
-        WHERE cpi.date = (SELECT MAX(date) FROM US_CPI);''')
-    
-    # Build FED_RATES_VW View
-    curr.execute('''DROP VIEW IF EXISTS FED_RATES_VW;''')
-    curr.execute('''CREATE VIEW FED_RATES_VW AS
-        SELECT date, value, 'Tresury Yield' as indicator FROM US_TREASURY_YIELD
+        WHERE cpi.date = (SELECT MAX(date) FROM US_CPI)
         UNION ALL
-        SELECT date, value, 'Federal Funds Rate' as indicator FROM US_FEDERAL_FUNDS_RATE;''')
+        SELECT 'Treasury Yield' AS indicator, ty.value AS value
+        FROM US_TREASURY_YIELD ty
+        WHERE ty.date = (SELECT MAX(date) FROM US_TREASURY_YIELD)
+        UNION ALL
+        SELECT 'Fed Funds Rate' AS indicator, ffr.value AS value
+        FROM US_FEDERAL_FUNDS_RATE ffr
+        WHERE ffr.date = (SELECT MAX(date) FROM US_FEDERAL_FUNDS_RATE);''')
+    
+    # # Build FED_RATES_VW View
+    # curr.execute('''DROP VIEW IF EXISTS FED_RATES_VW;''')
+    # curr.execute('''CREATE VIEW FED_RATES_VW AS
+    #     SELECT date, value, 'Tresury Yield' as indicator FROM US_TREASURY_YIELD
+    #     UNION ALL
+    #     SELECT date, value, 'Federal Funds Rate' as indicator FROM US_FEDERAL_FUNDS_RATE;''')
     
     conn.commit()
     conn.close()
