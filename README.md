@@ -1,16 +1,20 @@
-So after thinking about this here is what I think I want to do
+# Economics Batch ETL Project (Version 1.0)
 
-1. Every weekday I will pull from API's and get the latest data. The API's I am currently looking into are:
-    Alpha Vantage's API for Commodities, Forex, and Econ indicators
-        Will need latest 1000 days (to be safe)
-    Market Data Docs' API for Indices quotes (or candle)
-2. I will format from JSON into Dataframes then into csv (?) so I can send to DB - Snowflake I guess
-3. In Snowflake I will package data as I need it:
-    a. I will build (Materialized?) views for dashboard. 
-    b. Also create moving averages calculations among others and store in the appropriate DB
-    c. 
-4. I will pull data from the database for the dashboard
-    a. Unsure whether to build or use service for Dashboard
+## Tech: Python | Pandas | SQLite | Numpy | Requests | OS/CSV/TIME/DOTENV
+
+    This project was originally written as a way to not only practice building a data pipeline locally, but also to learn SQLite and charting libraries in a data project. For charting I used __Dash__ and __Plotly__ libraries.
+
+    The pipeline first builds the database locally using SQLite and get's the economics data from a few API's. From there calculations are made for charting and inserted into the database tables or views. Lastly the data is consumed and charted in the browser. A _.env_ file contains the API keys and other security info.
+
+## Project Roadmap (01/04/2024)
+
+    My plan moving forward is to package this project into something that can be downloaded and used by anyone locally. Below is a non-inclusive (and unordered) list for what needs to be completed and was updated on the date listed above:
+
+    - Form these files into an executable CLI program
+    - Include prompts for naming the database, tables and views a well as API keys
+    - Include a teardown file for removing the database at user prompt
+    - Include -help resources and other misc files 
+    - Removing of unecessary files currently included
 
 
 
@@ -18,32 +22,4 @@ So after thinking about this here is what I think I want to do
 
 
 
-From cals notes:
 
-# Array Creation:
-#  Creating an array from a standard python list:
-a = np.array([1,2,3,4,5,6])
-# array() transforms sequences into arrays ie the below is the same as the above
-b = np.array(1,2,3,4,5,6)
-#  The type can be explicitly specified at the time of creation by passing ain a possible 2nd arg
-c = np.array([[1, 2], [3, 4]], dtype=complex)
-#  growing an array is costly so it is better to use zeros(), ones() or empty() when creating an array since you know the (total)"size"
-d = np.zeros((3,4)) # this shape has a "length" of 3 with 4 elements in each segment
-#  arange() can be used to create a sequence of numbers and can use floats
-e = np.arange(1,10,.5) # this will give an array of numbers between 1 and 10 (not including 10) AND WIL INCREMENT BY .5
-#  To get a specific number of elememts you should use linspace() which specifies how many elements you want rather than incrementing 
-f = np.linspace(0,2,9)
-#  other methods used are sum() which sums the elements in an ndarray and min()/max()
-fsum = f.sum()
-# you can specify the axis to use if you don't want all elements summed
-# the below will give a cumulative sum for row (axis=0 would give cumulative for columns)
-g = c.cumsum(axis=1)
-#  universal functions: sin() cos() exp() sqrt() and they won; element-wise
-# arrays can be sliced just like lists when one dimension, and when 2 dimensions they use 1 index per dimension (ie [2,3] row 3 and column 4)
-# c[0:5, 1] = rows 1 thru 5, the second column and equals [:,1] IF there are 5 rows ( or a shape of (2 or more,5))
-# iterating over the ndarray should be done using the flat attribute:
-for element in c.flat:
-    print(element)
-# iterating over a multidimensional array is done with respect to the first axes:
-for row in b:
-    print(row)

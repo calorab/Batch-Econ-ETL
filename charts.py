@@ -1,7 +1,6 @@
-import numpy as np
 import pandas as pd
 import sqlite3
-from sqlite3 import OperationalError, Error
+from sqlite3 import Error
 from dash import Dash, html, dcc, Input, Output, callback
 import plotly.express as px 
 from mapping import field_mapping as map
