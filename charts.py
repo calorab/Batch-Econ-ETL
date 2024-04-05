@@ -7,34 +7,41 @@ from mapping import field_mapping as map
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 
-#  CALEB - you need ECON data, CONSUMER data and INTERACTIVE data
 
 def get_bank_data():
+    conn = None
+    df = None
     # Check for innitial DB connection issue
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+        query = '''SELECT * FROM FED_RATES_VW ORDER BY date ASC'''
+        df = pd.read_sql_query(query, conn)
+        df['value'] = df['value'].astype(float)
     except Error as err:
         print('Connection error \n', err)
+    finally:
+        # Close connection
+        if conn:
+            conn.close()
 
-    query = '''SELECT * FROM FED_RATES_VW ORDER BY date ASC'''
-    df = pd.read_sql_query(query, conn)
-    df['value'] = df['value'].astype(float)
-    
-    conn.close()
     return df
 
 def get_cons_data():
+    conn = None
+    df = None
     # Check for innitial DB connection issue
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
+        query = '''SELECT * FROM CONSUMER_ECON_VW'''
+        df = pd.read_sql_query(query, conn)
+        df['value'] = df['value'].astype(float)
     except Error as err:
         print('Connection error \n', err)
-
-    query = '''SELECT * FROM CONSUMER_ECON_VW'''
-    df = pd.read_sql_query(query, conn)
-    df['value'] = df['value'].astype(float)
+    finally:
+        # Close connection
+        if conn:
+            conn.close()
     
-    conn.close()
     return df
 
 def build_dropdown():
