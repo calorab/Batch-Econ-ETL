@@ -137,6 +137,6 @@ def update_interactive_graph(index, sma1, sma2, ema):
     # also need dropdown list for interactivity (line 60)
     return fig
 
-app.run_server(debug=True)
+# app.run_server(debug=True)
 # app.run_server(dev_tools_hot_reload=False) to remove hot-reloading
 # The location of the app: http://127.0.0.1:8050/ 
