@@ -43,7 +43,7 @@ def build_av_data(data, source):
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        logging.info('Connection error \n', err)
+        logging.error('Connection error \n', err)
 
     curr = conn.cursor()
     if field_type == 'dateValue':
@@ -55,9 +55,9 @@ def build_av_data(data, source):
             for record in data_set:
                 curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, value) VALUES (?,?)''', (record['date'], record['value']))
         except OperationalError as err:
-            logging.info(f'    Opp Error: {err}')
+            logging.error(f'    Opp Error: {err}')
         except Error as err:
-            logging.info(err)
+            logging.error(err)
         
 
     else:
@@ -69,9 +69,9 @@ def build_av_data(data, source):
             for key, val in data_set.items():
                 curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
         except OperationalError as err:
-            logging.info(f'    Opp Error: {err}')
+            logging.error(f'    Opp Error: {err}')
         except Error as err:
-            logging.info(err)
+            logging.error(err)
         
 
     # After creating a connection to sqlite DB I have to committhe changes and close the connection
@@ -92,7 +92,7 @@ def build_md_data(data, source):
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        logging.info('Connection error \n', err)
+        logging.error('Connection error \n', err)
 
     curr = conn.cursor()
 
@@ -105,9 +105,9 @@ def build_md_data(data, source):
         for row in data_rows:
             curr.execute(insert_query, row)
     except OperationalError as err:
-        logging.info(f'    Opp Error: {err}')
+        logging.error(f'    Opp Error: {err}')
     except Error as err:
-        logging.info(err)
+        logging.error(err)
     finally:
         # After creating a connection to sqlite DB I have to committhe changes and closethe connection
         conn.commit()
@@ -122,15 +122,14 @@ def av_api_call():
         try:
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            logging.info(link, '\n', url, '\n')
             response = requests.get(url)
 
             response.raise_for_status()
             data = response.json()
         except HTTPError as http_err:
-            logging.info(f'An HTTP error occurred on {link}: {http_err}')
+            logging.error(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
-            logging.info(f'There was an error with {link}:', err)
+            logging.error(f'There was an error with {link}:', err)
         finally:
 
             # Insert data into Sqlite Database
@@ -146,16 +145,15 @@ def md_api_call():
         try:
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            logging.info(link,)
             response = requests.get(url)
 
             response.raise_for_status()
             data = response.text
 
         except HTTPError as http_err:
-            logging.info(f'An HTTP error occurred on {link}: {http_err}')
+            logging.error(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
-            logging.info(f'There was an error with {link}:', err)
+            logging.error(f'There was an error with {link}:', err)
         finally:
 
             # Insert data into Sqlite Database
@@ -166,7 +164,7 @@ def build_views():
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        logging.info('Connection error \n', err)
+        logging.error('Connection error \n', err)
 
     curr = conn.cursor()
 
