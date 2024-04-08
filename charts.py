@@ -66,6 +66,35 @@ bank_figure = px.line(bank_df, x='date', y='value', color='indicator')
 dp_options, dp_dict = build_dropdown()
 
 
+# app.layout = html.Div([
+#     html.H3('Economics dashboard', style={'font-weight': 'bold', 'text-align': 'center'}),
+#     html.Hr(),
+#     html.Div([
+#         html.Div([
+#             html.Label('Consumer Economic Indicators', style={'font-weight': 'bold'}),
+#             html.Table([
+#                 html.Thead(
+#                     html.Tr([html.Td(cons_df.columns[0]), html.Td(cons_df.columns[1])])
+#                 ),
+#                 html.Tbody([html.Tr([html.Th(cons_df.iloc[0][0]), html.Td(cons_df.iloc[0][1])]), html.Tr([html.Th(cons_df.iloc[1][0]), html.Td(cons_df.iloc[1][1])]), html.Tr([html.Th(cons_df.iloc[2][0]), html.Td(cons_df.iloc[2][1])]), html.Tr([html.Th(cons_df.iloc[3][0]), html.Td(cons_df.iloc[3][1])]), html.Tr([html.Th(cons_df.iloc[4][0]), html.Td(cons_df.iloc[4][1])])])
+#                 ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'}), 
+
+#             html.Br(),
+#             dcc.Dropdown(dp_options, 'S&P 500', id='index-dropdown', style={'margin-bottom': 10}),
+#             html.Label('Simple Moving Average'),
+#             html.Div([
+#                 dcc.Dropdown([10, 20, 50], 10,id='sma-dropdown-one', style={'margin-right': 20}),
+#                 dcc.Dropdown([20, 50, 80, 120], 20,id='sma-dropdown-two', style={'margin-left': 20}),
+#             ], style={'display': 'flex', 'flex-direction': 'row', 'align-self': 'center'}),
+            
+#             html.Br(),
+#             html.Label('Exponential Moving Average'),
+#             dcc.Dropdown([12, 24, 50, 100], 12, id='ema-dropdown', style={'margin-top': 10})
+#             ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 10, 'flex': 1.5, 'align-self': 'flex-start'}),
+    
+#             dcc.Graph(id='main-graph', style={'padding': 20,'flex': 4, 'align-self': 'flex-end'}) 
+#     ], style={'display': 'flex', 'flex-direction': 'row', 'padding': 10, 'flex': 1})       
+# ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})
 app.layout = html.Div([
     html.H3('Economics dashboard', style={'font-weight': 'bold', 'text-align': 'center'}),
     html.Hr(),
@@ -76,25 +105,31 @@ app.layout = html.Div([
                 html.Thead(
                     html.Tr([html.Td(cons_df.columns[0]), html.Td(cons_df.columns[1])])
                 ),
-                html.Tbody([html.Tr([html.Th(cons_df.iloc[0][0]), html.Td(cons_df.iloc[0][1])]), html.Tr([html.Th(cons_df.iloc[1][0]), html.Td(cons_df.iloc[1][1])]), html.Tr([html.Th(cons_df.iloc[2][0]), html.Td(cons_df.iloc[2][1])]), html.Tr([html.Th(cons_df.iloc[3][0]), html.Td(cons_df.iloc[3][1])]), html.Tr([html.Th(cons_df.iloc[4][0]), html.Td(cons_df.iloc[4][1])])])
-                ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'}), # CALEB Need to turn this into a loop or something eventually,
+                html.Tbody([
+                    html.Tr([html.Th(cons_df.iloc[0, 0]), html.Td(cons_df.iloc[0, 1])]),
+                    html.Tr([html.Th(cons_df.iloc[1, 0]), html.Td(cons_df.iloc[1, 1])]),
+                    html.Tr([html.Th(cons_df.iloc[2, 0]), html.Td(cons_df.iloc[2, 1])]),
+                    html.Tr([html.Th(cons_df.iloc[3, 0]), html.Td(cons_df.iloc[3, 1])]),
+                    html.Tr([html.Th(cons_df.iloc[4, 0]), html.Td(cons_df.iloc[4, 1])])
+                ], style={'padding': 10, 'flex': 1, 'textAlign': 'left'})
+            ]), 
 
             html.Br(),
             dcc.Dropdown(dp_options, 'S&P 500', id='index-dropdown', style={'margin-bottom': 10}),
             html.Label('Simple Moving Average'),
             html.Div([
-                dcc.Dropdown([10, 20, 50], 10,id='sma-dropdown-one', style={'margin-right': 20}),
-                dcc.Dropdown([20, 50, 80, 120], 20,id='sma-dropdown-two', style={'margin-left': 20}),
+                dcc.Dropdown([10, 20, 50], 10, id='sma-dropdown-one', style={'margin-right': 20}),
+                dcc.Dropdown([20, 50, 80, 120], 20, id='sma-dropdown-two', style={'margin-left': 20}),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-self': 'center'}),
             
             html.Br(),
             html.Label('Exponential Moving Average'),
             dcc.Dropdown([12, 24, 50, 100], 12, id='ema-dropdown', style={'margin-top': 10})
-            ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 10, 'flex': 1.5, 'align-self': 'flex-start'}),
+        ], style={'display': 'flex', 'flex-direction': 'column', 'padding': 10, 'flex': 1.5, 'align-self': 'flex-start'}),
     
-            dcc.Graph(id='main-graph', style={'padding': 20,'flex': 4, 'align-self': 'flex-end'}) 
+        dcc.Graph(id='main-graph', style={'padding': 20, 'flex': 4, 'align-self': 'flex-end'}) 
     ], style={'display': 'flex', 'flex-direction': 'row', 'padding': 10, 'flex': 1})       
-], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40,'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})
+], style={'display': 'flex', 'flex-direction': 'column', 'padding': 20, 'margin': 40, 'border-style': 'solid', 'border-color': 'lightgrey', 'border-width': '1px', 'box-shadow': '2px 4px 4px rgba(0, 0, 0, 0.4)'})
 
 
 @callback(
