@@ -1,9 +1,39 @@
-2024-04-08 10:14:54,740 - 15 second delay after call to AV_FOREX_URL
-2024-04-08 10:15:10,289 - 15 second delay after call to AV_OIL_WTI_URL
-2024-04-08 10:15:25,461 - 15 second delay after call to AV_COMMODITIES_INDEX_URL
-2024-04-08 10:15:40,607 - 15 second delay after call to AV_GDP_URL
-2024-04-08 10:15:55,794 - 15 second delay after call to AV_TYIELD_URL
-2024-04-08 10:16:10,995 - 15 second delay after call to AV_FUNDS_RATE_URL
-2024-04-08 10:16:26,220 - 15 second delay after call to AV_CPI_URL
-2024-04-08 10:16:41,373 - 15 second delay after call to AV_INFLATION_URL
-2024-04-08 10:16:56,531 - 15 second delay after call to AV_UNEMPLOYMENT_URL
+2024-04-08 12:37:05,143 - Starting MD API calls...
+2024-04-08 12:37:10,434 - API call successful for MD_COMP_INDICES_URL
+2024-04-08 12:37:10,434 - Building NASDAQ_COMPOSITE_INDEX...
+2024-04-08 12:37:10,436 - Trying SQL statements execution...
+2024-04-08 12:37:10,438 - table dropped
+2024-04-08 12:37:10,439 - table created
+2024-04-08 12:37:10,440 - after query defenition
+2024-04-08 12:37:10,441 - Done with MD_COMP_INDICES_URL
+2024-04-08 12:37:11,898 - API call successful for MD_NYA_INDICES_URL
+2024-04-08 12:37:11,898 - Building NYSE_COMPOSITE_INDEX...
+2024-04-08 12:37:11,900 - Trying SQL statements execution...
+2024-04-08 12:37:11,902 - table dropped
+2024-04-08 12:37:11,903 - table created
+2024-04-08 12:37:11,904 - after query defenition
+2024-04-08 12:37:11,905 - Done with MD_NYA_INDICES_URL
+2024-04-08 12:37:13,698 - API call successful for MD_SPX_INDICES_URL
+2024-04-08 12:37:13,698 - Building SP_500_INDEX...
+2024-04-08 12:37:13,700 - Trying SQL statements execution...
+2024-04-08 12:37:13,702 - table dropped
+2024-04-08 12:37:13,703 - table created
+2024-04-08 12:37:13,704 - after query defenition
+2024-04-08 12:37:13,705 - Done with MD_SPX_INDICES_URL
+2024-04-08 12:37:16,404 - API call successful for MD_XAU_INDICES_URL
+2024-04-08 12:37:16,405 - Building GOLD_SILVER_INDEX...
+2024-04-08 12:37:16,406 - Trying SQL statements execution...
+2024-04-08 12:37:16,408 - table dropped
+2024-04-08 12:37:16,410 - table created
+2024-04-08 12:37:16,410 - after query defenition
+2024-04-08 12:37:16,411 - Done with MD_XAU_INDICES_URL
+2024-04-08 12:37:18,044 - API call successful for MD_DJI_INDICES_URL
+2024-04-08 12:37:18,044 - Building DOW_JONES_INDUSTRIAL_AVERAGE...
+2024-04-08 12:37:18,045 - Trying SQL statements execution...
+2024-04-08 12:37:18,048 - table dropped
+2024-04-08 12:37:18,049 - table created
+2024-04-08 12:37:18,049 - after query defenition
+2024-04-08 12:37:18,050 - Done with MD_DJI_INDICES_URL
+2024-04-08 12:37:18,054 - Building CONSUMER_ECON_VW
+2024-04-08 12:37:18,056 - closing SQLite connection...
+2024-04-08 12:37:18,056 - Done!
