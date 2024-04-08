@@ -8,21 +8,23 @@ import pandas as p
 from pandas import io
 import sqlite3
 from sqlite3 import OperationalError, Error
+import logging
 
 from mapping import field_mapping as map
 
 # Accessing the .env file in order to grab the URL's fopr GET requests to the API's listed in the below tuple
 load_dotenv()
+logging.basicConfig(filename='api_calls.log', filemode='w', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 AV_POOL = ('AV_FOREX_URL','AV_OIL_WTI_URL','AV_COMMODITIES_INDEX_URL','AV_GDP_URL','AV_TYIELD_URL', 'AV_FUNDS_RATE_URL','AV_CPI_URL','AV_INFLATION_URL','AV_UNEMPLOYMENT_URL','MD_DJI_INDICES_URL')
 MD_POOL = ('MD_COMP_INDICES_URL', 'MD_NYA_INDICES_URL', 'MD_SPX_INDICES_URL', 'MD_XAU_INDICES_URL', 'MD_DJI_INDICES_URL')
 
 def main():
     # GET data from Alpha-Vantage API
-    # av_api_call()
+    av_api_call()
 
     # GET data from Market Data API
-    # md_api_call()
+    md_api_call()
 
     # Build views for Dashboard
     build_views()
@@ -41,7 +43,7 @@ def build_av_data(data, source):
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        print('Connection error \n', err)
+        logging.info('Connection error \n', err)
 
     curr = conn.cursor()
     if field_type == 'dateValue':
@@ -53,9 +55,9 @@ def build_av_data(data, source):
             for record in data_set:
                 curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, value) VALUES (?,?)''', (record['date'], record['value']))
         except OperationalError as err:
-            print(f'    Opp Error: {err}')
+             logging.info(f'    Opp Error: {err}')
         except Error as err:
-            print(err)
+             logging.info(err)
         
 
     else:
@@ -67,9 +69,9 @@ def build_av_data(data, source):
             for key, val in data_set.items():
                 curr.execute('''INSERT INTO ''' + data_base_table + ''' (date, open, high, low, close) VALUES (?,?,?,?,?)''', (key, val['1. open'], val['2. high'], val['3. low'], val['4. close']))
         except OperationalError as err:
-            print(f'    Opp Error: {err}')
+             logging.info(f'    Opp Error: {err}')
         except Error as err:
-            print(err)
+             logging.info(err)
         
 
     # After creating a connection to sqlite DB I have to committhe changes and close the connection
@@ -90,7 +92,7 @@ def build_md_data(data, source):
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        print('Connection error \n', err)
+         logging.info('Connection error \n', err)
 
     curr = conn.cursor()
 
@@ -103,9 +105,9 @@ def build_md_data(data, source):
         for row in data_rows:
             curr.execute(insert_query, row)
     except OperationalError as err:
-        print(f'    Opp Error: {err}')
+         logging.info(f'    Opp Error: {err}')
     except Error as err:
-        print(err)
+         logging.info(err)
     finally:
         # After creating a connection to sqlite DB I have to committhe changes and closethe connection
         conn.commit()
@@ -118,25 +120,24 @@ def av_api_call():
     for link in AV_POOL:
         
         try:
-
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            print(link, '\n', url, '\n')
+             logging.info(link, '\n', url, '\n')
             response = requests.get(url)
 
             response.raise_for_status()
             data = response.json()
         except HTTPError as http_err:
-            print(f'An HTTP error occurred on {link}: {http_err}')
+             logging.info(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
-            print(f'There was an error with {link}:', err)
+             logging.info(f'There was an error with {link}:', err)
         finally:
 
             # Insert data into Sqlite Database
             build_av_data(data, link)
 
             # 15 second delay due to API call limits for Alpha vantage (5 calls/min Max)
-            print(f'15 second delay after call to {link}')
+             logging.info(f'15 second delay after call to {link}')
             time.sleep(15)
         
  
@@ -145,16 +146,16 @@ def md_api_call():
         try:
             # get the link from .env file and make the API request. Check for errors and decode the JSON.
             url = os.getenv(link)
-            print(link,)
+             logging.info(link,)
             response = requests.get(url)
 
             response.raise_for_status()
             data = response.text
 
         except HTTPError as http_err:
-            print(f'An HTTP error occurred on {link}: {http_err}')
+             logging.info(f'An HTTP error occurred on {link}: {http_err}')
         except Exception as err:
-            print(f'There was an error with {link}:', err)
+             logging.info(f'There was an error with {link}:', err)
         finally:
 
             # Insert data into Sqlite Database
@@ -165,7 +166,7 @@ def build_views():
     try:
         conn = sqlite3.connect('MACRO_ECONOMIC_DATA.db')
     except Error as err:
-        print('Connection error \n', err)
+         logging.info('Connection error \n', err)
 
     curr = conn.cursor()
 
